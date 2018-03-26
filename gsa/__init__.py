@@ -2,6 +2,7 @@
 
 Peter Cicman, Divio 2009
 Stefan Foulis, Divio 2010
+David Wasylciw, 2016
 
 More docs here:
     http://code.google.com/apis/searchappliance/documentation/52/index.html
@@ -11,7 +12,6 @@ import urllib
 import urllib2
 import itertools
 from xml.etree import ElementTree
-from django.contrib.sites.models import Site
 from gsa.queryset import FakeQuerySet
 from logging import getLogger
 logger = getLogger('gsa')
@@ -71,7 +71,6 @@ class GSA(object):
             self.data.update(kwargs)
 
         _data = ["%s=%s" % (key, urllib2.quote(unicode(value).encode('utf8'))) for key, value in self.data.items()]
-        #_data = ["%s=%s" % (key, urllib2.quote(value)) for key, value in self.data.items()]
 
         url = "http://%(host)s/search?%(data)s" %{
             'host': self.host,
@@ -85,8 +84,7 @@ class GSA(object):
             #from traceback import format_exception
             #trace_exc = '\n'.join(format_exception(*sys.exc_info()))
 
-            current_site = Site.objects.get_current()
-            subject = "GSA %s failed. (query: %s site: %s)" % (self.host, url, current_site)
+            subject = "GSA %s failed. (query: %s)" % (self.host, url)
             logger.error(subject, exc_info=sys.exc_info())
             return GSAEmptyResult()
 
